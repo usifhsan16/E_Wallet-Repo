@@ -1,14 +1,19 @@
 package com.example.E_Wallet.Service;
 
+import com.example.E_Wallet.DTO.WalletDTO;
 import com.example.E_Wallet.Entity.Wallet;
 import com.example.E_Wallet.Repository.WalletRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
-
+@Service
+@RequiredArgsConstructor
 public class WalletService implements GenericService<Wallet>{
-    WalletRepository walletRepository;
-    @Override
+    private final WalletRepository walletRepository;
+
     public Wallet FindById(UUID id) {
         return walletRepository.findById(id).orElse(null);
     }
@@ -21,14 +26,8 @@ public class WalletService implements GenericService<Wallet>{
         }
     }
 
-    @Override
+
     public Wallet Save(Wallet entity) {
-        if (entity.getWalletId()!=null){
-            throw new IllegalArgumentException("Wallet Already Exist");
-        }
-        else{
-            entity.setWalletBalance(0);
           return walletRepository.save(entity);
-        }
     }
 }
