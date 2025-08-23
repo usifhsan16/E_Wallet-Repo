@@ -1,6 +1,7 @@
 package com.example.E_Wallet.Service;
 
 import com.example.E_Wallet.Entity.Transactions;
+import com.example.E_Wallet.ExceptionHandle.WrongDataException;
 import com.example.E_Wallet.Repository.TransactionsRepository;
 import jakarta.transaction.Transaction;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,11 @@ import java.util.UUID;
 public class TransactionsService implements GenericService<Transactions>{
     private final TransactionsRepository transactionsRepository;
     public Transactions FindById(UUID id) {
-        return transactionsRepository.findById(id).orElse(null);
+        Transactions transactions=transactionsRepository.findById(id).orElse(null);
+        if(transactions==null){
+            throw new WrongDataException("This transaction doesnt exist");
+        }
+        return transactions;
     }
 
     @Override
@@ -23,14 +28,14 @@ public class TransactionsService implements GenericService<Transactions>{
             transactionsRepository.delete(byId.get());
         }
         else{
-            throw new IllegalArgumentException("Invalid Id");
+            throw new WrongDataException("Invalid Id");
         }
     }
 
 
     public Transactions Save(Transactions entity) {
         if (entity.getTransactionId()!=null){
-           throw new IllegalArgumentException("Invalid id");
+           throw new WrongDataException("transaction id already exist");
         }else {
             return transactionsRepository.save(entity);
         }

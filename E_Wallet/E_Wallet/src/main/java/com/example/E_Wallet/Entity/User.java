@@ -2,6 +2,7 @@ package com.example.E_Wallet.Entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,8 +17,12 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID UserId;
+    @NotBlank
     private String UserName;
+    @NotBlank
+    @Column(unique = true)
     private String UserEmail;
+    @NotBlank
     private String UserPassword;
     @OneToOne
     @JoinColumn(name = "WalletId")

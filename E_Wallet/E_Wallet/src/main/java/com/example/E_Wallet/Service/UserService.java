@@ -6,6 +6,7 @@ import com.example.E_Wallet.DTO.WalletDTO;
 import com.example.E_Wallet.Entity.Transactions;
 import com.example.E_Wallet.Entity.User;
 import com.example.E_Wallet.Entity.Wallet;
+import com.example.E_Wallet.ExceptionHandle.WrongDataException;
 import com.example.E_Wallet.Repository.UserRepository;
 import com.example.E_Wallet.Repository.WalletRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,12 +24,11 @@ public class UserService implements GenericService<User> {
     private final WalletRepository walletRepository;
 
 
-    public User findUser(UUID id){
-        return userRepository.findById(id).orElse(null);
-    }
-
     public UserDTO FindById(UUID id) {
         User user=userRepository.findById(id).orElse(null);
+        if (user == null) {
+            throw new WrongDataException("User does not Exist in the system");
+        }
         UserDTO dto= new UserDTO();
         dto=dto.toDTO(user);
         WalletDTO walletDTO= new WalletDTO();
@@ -37,16 +37,12 @@ public class UserService implements GenericService<User> {
         return dto;
     }
 
-    public User Save(UserDTO userDTO) {
-        Wallet wallet=userDTO.getUserWallet().toEntity(userDTO.getUserWallet());
-        walletService.Save(wallet);
-        User entity= userDTO.toEntity(userDTO);
-        entity.setUserWallet(wallet);
+    public User Save(User entity) {
+        walletService.Save(entity.getUserWallet());
         if (entity.getUserId()!=null){
-            throw new IllegalArgumentException("Invalid User id");
+            throw new WrongDataException("Invalid User id");
         }
         else{
-            entity.setUserWallet(wallet);
             return userRepository.save(entity);
         }
     }
@@ -58,7 +54,7 @@ public class UserService implements GenericService<User> {
             userRepository.delete(byId.get());
         }
         else {
-            throw new IllegalArgumentException("User not Found!!"+id);
+            throw new WrongDataException("User not Found!!"+id);
         }
     }
 
@@ -66,9 +62,9 @@ public class UserService implements GenericService<User> {
     public UserDTO WithdrawMoney(UUID id,double Amount){
         User entity=userRepository.findById(id).orElse(null);
         if (entity==null){
-            throw new IllegalArgumentException("Invalid Id");
+            throw new WrongDataException("This Id "+id+" does not exist");
         } else if (entity.getUserWallet().getWalletBalance()<Amount) {
-            throw new IllegalArgumentException("You have less than "+Amount+" in your account");
+            throw new WrongDataException("You have less than "+Amount+" in your account");
         } else {
             //Creating Transaction
             Transactions transactions= new Transactions();
@@ -97,7 +93,7 @@ public class UserService implements GenericService<User> {
     public UserDTO Deposit(UUID id,double Amount){
         User entity= userRepository.findById(id).orElse(null);
         if(entity==null){
-            throw new IllegalArgumentException("Invalid Id");
+            throw new WrongDataException("Id doesnt exist in the system");
         }
         else{
             //Creating Transaction
@@ -122,5 +118,13 @@ public class UserService implements GenericService<User> {
             return dto;
         }
 
+    }
+
+    public UserDTO TransferMoney(UUID withdrawerId,UUID depositerID,double Amount){
+        if(withdrawerId==depositerID){
+            throw new IllegalArgumentException("You cant transfer money to the same user");
+        }
+        UserDTO dto=Deposit(depositerID,Amount);
+        return WithdrawMoney(withdrawerId,Amount);
     }
 }

@@ -18,11 +18,14 @@ public class UserController {
     public UserDTO GetUser(@RequestParam UUID id){
         return userService.FindById(id);
     }
+
     @PostMapping("/SaveUser")
-    public User SaveUser(@RequestBody UserDTO entity){
+    public UserDTO SaveUser(@RequestBody User entity){
         userService.Save(entity);
-        User user=entity.toEntity(entity);
-        return user;
+        entity.getUserWallet().setWalletBalance(0);
+        UserDTO userDTO= new UserDTO();
+        userDTO=userDTO.toDTO(entity);
+        return userDTO;
     }
 
 }

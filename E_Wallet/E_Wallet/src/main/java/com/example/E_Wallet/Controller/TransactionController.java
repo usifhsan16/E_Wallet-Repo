@@ -27,4 +27,8 @@ public class TransactionController {
     public UserDTO Deposit(@RequestParam UUID id, @RequestParam double Amount){
         return userService.Deposit(id,Amount);
     }
+    @PostMapping("/Transfer")
+    public UserDTO Transfer(@RequestParam UUID withdrawId,@RequestParam UUID depositId,@RequestParam double Amount){
+        return userService.TransferMoney(withdrawId,depositId,Amount);
+    }
 }
