@@ -27,5 +27,8 @@ public class UserController {
         userDTO=userDTO.toDTO(entity);
         return userDTO;
     }
-
+    @PostMapping("/DeleteUser")
+    public void DeleteUser(@RequestParam UUID id){
+        userService.Delete(id);
+    }
 }

@@ -1,12 +1,15 @@
 package com.example.E_Wallet.Service;
 
 import com.example.E_Wallet.Entity.Transactions;
+import com.example.E_Wallet.Entity.User;
 import com.example.E_Wallet.ExceptionHandle.WrongDataException;
 import com.example.E_Wallet.Repository.TransactionsRepository;
+import com.example.E_Wallet.Repository.UserRepository;
 import jakarta.transaction.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 @Service
@@ -41,5 +44,4 @@ public class TransactionsService implements GenericService<Transactions>{
         }
     }
 
-    
 }

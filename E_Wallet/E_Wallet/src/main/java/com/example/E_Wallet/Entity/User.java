@@ -24,10 +24,10 @@ public class User {
     private String UserEmail;
     @NotBlank
     private String UserPassword;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "WalletId")
     private Wallet UserWallet;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL,orphanRemoval = true)
     List<Transactions> UserTransactions;
 
     @Override
