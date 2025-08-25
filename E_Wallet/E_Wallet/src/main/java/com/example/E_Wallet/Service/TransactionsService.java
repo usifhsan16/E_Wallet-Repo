@@ -1,5 +1,6 @@
 package com.example.E_Wallet.Service;
 
+import com.example.E_Wallet.DTO.TransactionsDTO;
 import com.example.E_Wallet.Entity.Transactions;
 import com.example.E_Wallet.Entity.User;
 import com.example.E_Wallet.ExceptionHandle.WrongDataException;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transaction;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -16,6 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TransactionsService implements GenericService<Transactions>{
     private final TransactionsRepository transactionsRepository;
+    private final UserRepository userRepository;
+
     public Transactions FindById(UUID id) {
         Transactions transactions=transactionsRepository.findById(id).orElse(null);
         if(transactions==null){
@@ -44,4 +48,21 @@ public class TransactionsService implements GenericService<Transactions>{
         }
     }
 
+    public List<TransactionsDTO> findByUser_UserId(UUID id){
+        User user=userRepository.findById(id).orElse(null);
+        if (user==null){
+            throw new WrongDataException("This user does not exist");
+        }
+        List<TransactionsDTO> transactionsDTOS = new ArrayList<>();
+        List<Transactions>transactions= user.getUserTransactions();
+        if(transactions.isEmpty()){
+            throw new WrongDataException("This user does not have any previous transactions");
+        }
+        for(var transaction :transactions){
+            TransactionsDTO dto=new TransactionsDTO();
+            dto=dto.todto(transaction);
+            transactionsDTOS.add(dto);
+        }
+        return transactionsDTOS;
+    }
 }

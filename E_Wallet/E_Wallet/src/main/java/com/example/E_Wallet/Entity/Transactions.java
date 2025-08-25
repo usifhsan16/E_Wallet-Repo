@@ -18,7 +18,6 @@ public class Transactions {
     private String TransactionType;
     private double TransactionAmount;
     @ManyToOne
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @JoinColumn(name = "UserID")
     private User user;
 }

@@ -127,8 +127,9 @@ public class UserService implements GenericService<User> {
         if(withdrawerId==depositerID){
             throw new IllegalArgumentException("You cant transfer money to the same user");
         }
+        UserDTO withdrawer= WithdrawMoney(withdrawerId,Amount);
         UserDTO dto=Deposit(depositerID,Amount);
-        return WithdrawMoney(withdrawerId,Amount);
+        return withdrawer;
     }
 
     public List<Transactions> GetUserTransactions(UUID id){
