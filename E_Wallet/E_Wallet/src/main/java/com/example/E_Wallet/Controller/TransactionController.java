@@ -7,6 +7,7 @@ import com.example.E_Wallet.Repository.UserRepository;
 import com.example.E_Wallet.Service.TransactionsService;
 import com.example.E_Wallet.Service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,21 +21,25 @@ public class TransactionController {
     private final TransactionsService transactionsService;
 
     @PostMapping("/withdraw")
-    public UserDTO withdraw (@RequestParam UUID id,@RequestParam double Amount){
-        return userService.WithdrawMoney(id,Amount);
+    public ResponseEntity<UserDTO> withdraw (@RequestParam UUID id, @RequestParam double Amount){
+        UserDTO user= userService.WithdrawMoney(id,Amount);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/Deposit")
-    public UserDTO Deposit(@RequestParam UUID id, @RequestParam double Amount){
-        return userService.Deposit(id,Amount);
+    public ResponseEntity<UserDTO> Deposit(@RequestParam UUID id, @RequestParam double Amount){
+        UserDTO userDTO=userService.Deposit(id,Amount);
+        return ResponseEntity.ok(userDTO);
     }
     @PostMapping("/Transfer")
-    public UserDTO Transfer(@RequestParam UUID withdrawId,@RequestParam UUID depositId,@RequestParam double Amount){
-        return userService.TransferMoney(withdrawId,depositId,Amount);
+    public ResponseEntity<UserDTO> Transfer(@RequestParam UUID withdrawId,@RequestParam UUID depositId,@RequestParam double Amount){
+        UserDTO userDTO= userService.TransferMoney(withdrawId,depositId,Amount);
+        return ResponseEntity.ok(userDTO);
     }
 
     @GetMapping("/GetTransactions")
-    public List<TransactionsDTO> GetTransctions(@RequestParam UUID id){
-        return transactionsService.findByUser_UserId(id);
+    public ResponseEntity<List<TransactionsDTO>> GetTransctions(@RequestParam UUID id){
+        List<TransactionsDTO>transactionsDTOS=transactionsService.findByUser_UserId(id);
+        return ResponseEntity.ok(transactionsDTOS);
     }
 }

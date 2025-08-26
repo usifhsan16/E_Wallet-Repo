@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class WrongDataErrorHandler {
 
     @ExceptionHandler(WrongDataException.class)
-    public String handleWrongDataException(WrongDataException e){
-        return e.getMessage();
+    public ResponseEntity<String> handleWrongDataException(WrongDataException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public String HandleIllegalArgumentException(IllegalArgumentException e){
-        return e.getMessage();
+    public ResponseEntity<String> HandleIllegalArgumentException(IllegalArgumentException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -25,7 +25,11 @@ public class WrongDataErrorHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public String HandleDataIntegrityViolationException(DataIntegrityViolationException e){
-        return "This Email already exist";
+    public ResponseEntity<String> HandleDataIntegrityViolationException(DataIntegrityViolationException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String>HandleRuntimeException(RuntimeException e){
+        return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
